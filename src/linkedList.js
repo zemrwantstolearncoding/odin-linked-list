@@ -21,14 +21,24 @@ export default class LinkedList {
 
 	append(value) {
 		const newNode = new Node(value);
-		this.lastNode.nextNode = newNode;
-		this.lastNode = newNode;
+		if (!this.lastNode) {
+			this.head = newNode;
+			this.lastNode = newNode;
+		} else {
+			this.lastNode.nextNode = newNode;
+			this.lastNode = newNode;
+		}
 	}
 
 	prepend(value) {
 		const newNode = new Node(value);
-		newNode.nextNode = this.head;
-		this.head = newNode;
+		if (!this.head) {
+			this.head = newNode;
+			this.lastNode = newNode;
+		} else {
+			newNode.nextNode = this.head;
+			this.head = newNode;
+		}
 	}
 
 	size() {
@@ -42,11 +52,11 @@ export default class LinkedList {
 	}
 
 	getHead() {
-		return this.head ? this.head : "Empty list";
+		return this.head;
 	}
 
 	getTail() {
-		return this.lastNode ? this.lastNode : "Empty list";
+		return this.lastNode;
 	}
 
 	at(index) {
@@ -93,11 +103,12 @@ export default class LinkedList {
 
 	find(value) {
 		let current = this.head;
-		const count = 0;
+		let count = 0;
 		while (current) {
 			if (current.value === value) {
 				return count;
 			}
+			count += 1;
 			current = current.nextNode;
 		}
 		return null;
@@ -121,12 +132,20 @@ export default class LinkedList {
 	}
 
 	removeAt(index) {
-		if (index === 0) {
-			this.head = this.head.nextNode;
+		if (!this.head) {
 			return;
 		}
+
+		if (index === 0) {
+			this.head = this.head.nextNode;
+			if (!this.head) {
+				this.lastNode = null;
+			}
+			return;
+		}
+
 		const previous = this.at(index - 1);
-		if (previous) {
+		if (previous && previous.nextNode) {
 			previous.nextNode = previous.nextNode.nextNode;
 			if (!previous.nextNode) {
 				this.lastNode = previous;
